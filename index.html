@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Random Number Wisdom</title>
+  <style>
+    :root {
+      --main-bg: linear-gradient(to top right, #a1c4fd, #c2e9fb);
+      --accent: #1976d2;
+      --text-dark: #333;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100%;
+      background: var(--main-bg);
+      color: var(--text-dark);
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      transition: transform 0.2s, background-color 0.3s;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #125ca1;
+      transform: scale(1.05);
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 1.4rem;
+      padding: 25px;
+      background: #ffffffdd;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      max-width: 600px;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+      white-space: pre-wrap;
+      text-align: center;
+    }
+
+    #message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #copyBtn {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      #message {
+        font-size: 1.1rem;
+        padding: 20px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔢 Random Number Wisdom</h1>
+  <button onclick="generateRandom()">Get My Number!</button>
+  <div id="message"></div>
+  <button id="copyBtn" onclick="copyMessage()">📋 Copy Message</button>
+
+  <script>
+const messages = {
+1: "Believe in your journey — even if it’s slow, progress is progress",
+2: "Surround yourself with people who lift you higher",
+3: "Fake friends are like shadows They follow you in the sun but leave in the dark",
+4: "It's okay to rest You're not a robot",
+5: "Celebrate small victories They're the steps to big ones",
+6: "The best project you'll ever work on is you",
+7: "Grades matter but your mental health matters more",
+8: "You’re not behind you’re on your own path",
+9: "Don’t compare your chapter 1 to someone else’s chapter 20",
+10: "If it makes you happy it doesn’t have to make sense to others",
+11: "Be so good they can’t ignore you",
+12: "Every expert was once a beginner",
+13: "Protect your peace like it’s gold",
+14: "You don’t need a plan all the time Sometimes you just need to breathe and trust",
+15: "Do it scared Fear means you care",
+16: "Don’t let anyone rent space in your head for free",
+17: "Your future self is cheering for you",
+18: "Being kind is never out of fashion",
+19: "Keep going Your worst day only lasts 24 hours",
+20: "Success is built on failure frustration and even catastrophe",
+21: "Don’t overthink Just take the next right step",
+22: "Some people are lessons not losses",
+23: "Being busy doesn’t mean being productive",
+24: "The quietest people often have the loudest minds",
+25: "Your only competition is who you were yesterday",
+26: "Energy is contagious Choose wisely who you’re around",
+27: "Your vibe attracts your tribe",
+28: "You're allowed to outgrow people",
+29: "Growth feels like discomfort before it feels like strength",
+30: "Discipline beats motivation every time",
+31: "You are more capable than you realize",
+32: "Don’t dim your light because others are uncomfortable",
+33: "You’re not too old and it’s not too late",
+34: "What’s meant for you will find you",
+35: "Start before you’re ready",
+36: "You deserve the love you keep giving to others",
+37: "Be patient Great things take time",
+38: "You don’t need 100 friends You need a few real ones",
+39: "Your gut is wiser than your excuses",
+40: "Be brave enough to suck at something new",
+41: "You weren’t born to just pay bills and die",
+42: "Creativity is intelligence having fun",
+43: "Success is a series of small wins",
+44: "Never ignore red flags just because you like the person",
+45: "You’re doing better than you think",
+46: "Some days you just need to show up That’s enough",
+47: "Comparison steals joy Mind your own growth",
+48: "No one else has your voice Use it",
+49: "Forgive yourself for not knowing what you didn’t know",
+50: "You owe yourself the love you so freely give others",
+51: "Doubt kills more dreams than failure ever will",
+52: "Take naps Hydrate Delete toxic people",
+53: "Peace is the new success",
+54: "You’re not lazy — you’re exhausted Rest is productive",
+55: "Overthinking ruins good moments",
+56: "Not everyone deserves a front-row seat in your life",
+57: "Some rejections are redirections",
+58: "If it costs you your peace it’s too expensive",
+59: "Don’t apologize for growing differently than others expected",
+60: "It’s okay to start over — it’s growth not failure",
+61: "Work hard in silence Let success be your noise",
+62: "When in doubt choose courage",
+63: "A smooth sea never made a skilled sailor",
+64: "Keep your circle small but solid",
+65: "Learn to rest not to quit",
+66: "You can’t change others only how you react",
+67: "Let go of what you can’t control",
+68: "Choose progress over perfection",
+69: "You attract what you’re ready for",
+70: "What you consume affects your mind Guard it",
+71: "Boundaries are self-care not selfishness",
+72: "Consistency is more powerful than intensity",
+73: "Joy is a form of resistance",
+74: "You’re not hard to love",
+75: "You don’t have to explain your peace to anyone",
+76: "Even slow progress is progress",
+77: "Choose people who choose you",
+78: "Worrying is like a rocking chair — it gives you something to do but gets you nowhere",
+79: "You’re stronger than your excuses",
+80: "Don’t fear failure Fear regret",
+81: "Study smart not just hard",
+82: "There’s beauty in doing things imperfectly",
+83: "Not every door is meant to be opened",
+84: "Stay curious stay weird stay you",
+85: "Sometimes you outgrow environments not people",
+86: "Choose growth over comfort every time",
+87: "Take the risk or lose the chance",
+88: "If you’re always trying to be normal you’ll never know how amazing you can be",
+89: "No response is a response",
+90: "Be kind to your mind",
+91: "Don’t chase people Attract them",
+92: "Your path is valid even if it looks different",
+93: "You can restart anytime Don’t wait for Monday",
+94: "Don’t be afraid to shine The sun doesn’t apologize either",
+95: "Make time for things that make you feel alive",
+96: "Stay focused Your future deserves it",
+97: "Let your hustle be louder than your doubt",
+98: "The world needs your weirdness",
+99: "Be gentle with yourself You’re doing the best you can",
+100: "Great things never come from comfort zones"
+};
+
+function generateRandom() {
+  const num = Math.floor(Math.random() * 100) + 1;
+  const msg = messages[num] || "You're unique just like this number";
+  const formatted = `Your number is ${num} 🎉\n\n"${msg}"`;
+  const messageDiv = document.getElementById("message");
+  messageDiv.innerText = formatted;
+  messageDiv.classList.remove("show");
+  void messageDiv.offsetWidth;
+  messageDiv.classList.add("show");
+  const copyBtn = document.getElementById("copyBtn");
+  copyBtn.style.display = "inline-block";
+  copyBtn.innerText = "📋 Copy Message";
+}
+
+function copyMessage() {
+  const msg = document.getElementById("message").innerText;
+  navigator.clipboard.writeText(msg).then(() => {
+    const btn = document.getElementById("copyBtn");
+    btn.innerText = "✅ Copied!";
+    setTimeout(() => {
+      btn.innerText = "📋 Copy Message";
+    }, 2000);
+  });
+}
+  </script>
+</body>
+</html>
